@@ -57,20 +57,22 @@ existente en la carpete de firware que acabamos de clonar:
 * sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_02_blinky
 
 El contenido de la carpeta se presenta acontinuacion:
-![Cont_Blinky](https://github.com/jesusphilipraiz/Embebidos-Tp1/blob/master/Imagenes/Cont_Blinky.png)
+
+![Cont_Blinky](https://github.com/jesusphilipraiz/Embebidos/blob/master/TP1/Imagenes/Cont_Blinky.png)
 
 En la misma es posible observar 2 carpetas y un archivo Makefile.
 Como se mencionó en secciones previas, este ultimo archivo indica
 la carpeta donde se ubican los codigos fuentes, ./src, como 
 tambien los correspondientes headers en la carpeta ./inc.
 
-![Makefile](https://github.com/jesusphilipraiz/Embebidos-Tp1/blob/master/Imagenes/Makefile.png)
+![Makefile](https://github.com/jesusphilipraiz/Embebidos/blob/master/TP1/Imagenes/Makefile.png)
+
 
 |src 	 |inc 	  |Makefile|
 |------  |------  |------  |
 |blinky.c|blinky.h|-----   |
 
-![BlinkyC](https://github.com/jesusphilipraiz/Embebidos-Tp1/blob/master/Imagenes/BlinkyC.png)
+![BlinkyC](https://github.com/jesusphilipraiz/Embebidos/blob/master/TP1/Imagenes/BlinkyC.png)
 
 #### Primera ejecución con MCUXpresso
 
