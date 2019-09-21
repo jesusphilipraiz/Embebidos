@@ -39,19 +39,15 @@
 
 #define TP1_1 (1) /* Test & Migrate PROJECT = sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_02_blinky
                               to PROJECT = projects/SE-2018-TPs/TP1 */
-#define TP1_2 (2) /* Test & Migrate PROJECT = sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_01_switches_leds
+#define TP1_2 (2)	 /* Test & Migrate PROJECT = sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_01_switches_leds
                               to PROJECT = projects/SE-2018-TPs/TP1 */
-#define TP1_3 (3) /* Test & Migrate PROJECT = sapi_examples/edu-ciaa-nxp/bare_metal/tick_01_tickHook
+#define TP1_3 (3) 	 /* Test & Migrate PROJECT = sapi_examples/edu-ciaa-nxp/bare_metal/tick_01_tickHook
                               to PROJECT = projects/SE-2018-TPs/TP1 */
-#define TP1_4 (4) /* Making portable tickHook & LEDs */
-#define TP1_5 (5) /* Test DEBUG* functions */
-#define TP1_6 (6) /* Making portable tickHook & LEDs & Push Buttons */
+#define TP1_4 (4) 	 /* Making portable tickHook & LEDs */
+#define TP1_5 (5)	 /* Test DEBUG* functions */
+#define TP1_6 (6)	 /* Making portable tickHook & LEDs & Push Buttons */
 
-#define TEST (2)
-
-
-#if (TEST == 1)  /* Test & Migrate PROJECT = sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_02_blinky
-                            to PROJECT = projects/SE-2018-TPs/TP1 */
+#define TEST TP_2
 
 /*==================[inclusions]=============================================*/
 
@@ -72,9 +68,26 @@
 
 /*==================[external functions definition]==========================*/
 
+/* FUNCION que se ejecuta cada vez que ocurre un Tick. */
+void myTickHook( void *ptr ){
+
+   static bool_t ledState = OFF;
+   
+   gpioMap_t led = (gpioMap_t)ptr;
+
+   if( ledState ){
+      ledState = OFF;
+   }
+   else{
+      ledState = ON;
+   }
+   gpioWrite( led, ledState );
+}
+
 /* FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE RESET. */
 int main(void){
 
+#if (TEST == TP_1)
    /* ------------- INICIALIZACIONES ------------- */
 
    /* Inicializar la placa */
@@ -98,19 +111,15 @@ int main(void){
    /* NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa no es llamado
       por ningun S.O. */
    return 0 ;
-}
 
 /*==================[end of file]============================================*/
 #endif
 
 
-#if (TEST == 2)  /* Test & Migrate PROJECT = sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_02_blinky
+
+#if (TEST == TP_2)  /* Test & Migrate PROJECT = sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_02_blinky
                             to PROJECT = projects/SE-2018-TPs/TP1 */
 
-/*==================[inclusions]=============================================*/
-
-//#include "switches_leds.h"   // <= own header (optional)
-#include "sapi.h"              // <= sAPI header
 
 /*==================[macros and definitions]=================================*/
 
@@ -127,8 +136,6 @@ int main(void){
 /*==================[external functions definition]==========================*/
 
 /* FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE RESET. */
-int main(void)
-{
 
    /* ------------- INICIALIZACIONES ------------- */
 
@@ -165,17 +172,11 @@ int main(void)
    /* NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa no es llamado
       por ningun S.O. */
    return 0 ;
-}
 
 /*==================[end of file]============================================*/
 #endif
 
-#if (TEST == 3)
-
-/*==================[inclusions]=============================================*/
-
-//#include "tickHook.h"   // <= own header (optional)
-#include "sapi.h"         // <= sAPI header
+#if (TEST == TP_3)
 
 /*==================[macros and definitions]=================================*/
 
@@ -191,25 +192,8 @@ int main(void)
 
 /*==================[external functions definition]==========================*/
 
-/* FUNCION que se ejecuta cada vez que ocurre un Tick. */
-void myTickHook( void *ptr ){
-
-   static bool_t ledState = OFF;
-   
-   gpioMap_t led = (gpioMap_t)ptr;
-
-   if( ledState ){
-      ledState = OFF;
-   }
-   else{
-      ledState = ON;
-   }
-   gpioWrite( led, ledState );
-}
-
 
 /* FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE RESET. */
-int main(void){
 
    /* ------------- INICIALIZACIONES ------------- */
 
@@ -250,8 +234,10 @@ int main(void){
    /* NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa no es llamado
       por ningun S.O. */
    return 0 ;
-}
+
 
 /*==================[end of file]============================================*/
 
 #endif
+
+}
