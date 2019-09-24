@@ -51,12 +51,14 @@ En el archivo project.mk se configura el proyecto, el procesador y la placa.
 
 ### Primer uso con MCUXpresso
 
-Se procede a crear un workspace y un proyecto en base a un archivo 
-existente en la carpete de firware que acabamos de clonar:
+Se procede a crear un workspace y un proyecto en base a un Makefile 
+existente en la carpete de "firmware_v2" que acabamos de clonar. Se
+copia el contenido de la carpeta gpio_02_blinky a la carpeta de 
+nuestro proyecto.
 
-* sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_02_blinky
+* firmware_v2/sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_02_blinky
 
-El contenido de la carpeta se presenta acontinuacion:
+El contenido de la carpeta se presenta a continuación:
 
 ![Cont_Blinky](https://github.com/jesusphilipraiz/Embebidos/blob/master/TP1/Imagenes/Cont_Blinky.png)
 
@@ -64,6 +66,8 @@ En la misma es posible observar 2 carpetas y un archivo Makefile.
 Como se mencionó en secciones previas, este ultimo archivo indica
 la carpeta donde se ubican los codigos fuentes, ./src, como 
 tambien los correspondientes headers en la carpeta ./inc.
+
+Con respecto al Makefile, el contenido se presenta a continuación:
 
 ![Makefile](https://github.com/jesusphilipraiz/Embebidos/blob/master/TP1/Imagenes/Makefile.png)
 
