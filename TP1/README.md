@@ -170,15 +170,146 @@ void delay(tick_t duration){
 }
 ```
 
-### Primer uso con Github
-
 ### Migración de arhivos
 
-### Optimización de compilación
+Dado que se comprobó que el código "parpadeo de led" funciona correctamente, se procede a crear una carpeta en paralelo a la carpeta firmware_v2. En la misma se almacenarán los codigos correspondientes al primer trabajo practico
 
+%Imagen de la ubicación de la nueva carpeta
+
+Recordar que dado que se cambio la ubicación del proyecto se debe actualizar las definiciones de "project.mk"
+
+```
+PROJECT = ../TP1              # Actualización de la ubicación del proyecto
+TARGET = lpc4337_m4
+BOARD = edu_ciaa_nxp
+```
+
+Para comprobar que todo el proceso se realizó correctamente, se copia el contenido de la carpeta "blinky_02" a la carpeta "TP1" y se renombran todos los archivos, con exepción del Makefile, como "TP1.* " (Siendo .c o .h donde corresponda). Dado que la ejecución del codigo se realiza correctamente, se verifica una migración exitosa.
+
+### Primer uso con Github
+
+Dado que el trabajo practico se realizará en grupo, se crea un repositorio en GitHub y se guardan los cambios en el.
+
+```
+ git init                        #consola posicionada de en la carpeta ../TP1
+ git remote add origin [url del repositorio]
+ git add TP1/                    #no se quiere incluir la carpeta de firmware_v2 en cada actualización  
+ git commit –m ”commit inicial” 
+ git push -u origin master
+```  
+
+### Compilación condicional
+
+Dado que se tiene interes en ejecutar cualquier codigo sin tener que modificar el "project.mk" y/o copiar los nuevos codigos en la carpeta "TP1" para cada actualización, se procede a usar compilación condicional.
+
+```
+#define TP1_1 (1)       // Parpadeo de un LED
+#define TP1_2 (2)       // Encendido de luces en base a botones switch
+#define TP1_3 (3)       // Secuencia de encendido de luces
+
+#define TEST (TP1_1)    // Defino que código ejecutar
+
+#if (TEST == TP1_1)     // Parpadeo de un LED
+   \\Codigo 1
+#endif
+
+#if (TEST == TP1_1)     // Encendido de luces en base a botones switch
+...
+...
+
+``` 
+
+Gracias a la compilación condicional es posible ejecutar cualquiera de los tres proyectos solo modificando la varaible "TEST" aunque con la desventaja de tener todos los codigos en un solo archivo.
+
+Para comprobar que el proceso se realizó exitosamente, se cargan tres codigos al archivo "TP1.c" y se ejecuta cada uno modificando la variable TEST:
+
+* "blinky_02.c" 
+* "switches_leds.c"
+* "tickHook_01"
+
+Se observa que los tres codigos funcionan correctamente y por ende que la compilación condicional se aplicó correctamente.
+
+PROBLEMA: Los tres códigos funcionan perfectamente individualmente y con la compilación condicional, pero tras terminar de usar la placa y desconectar, no es posible usar el mismo puerto USB para la siguiente oportunidad. Agrego que antes de desconectar la placa paro todas las seciones de debug que se esten realizando. Ademas terminó y limpió en la pestaña "debig" todads aquellas seciones restantes. Realizó clean del proyecto y por ultimo close del proyecto, pero el problema persiste. 
+
+#### "switches_leds.c"
+
+```
+   while(1) {
+
+      valor = !gpioRead( TEC1 );
+      gpioWrite( LEDB, valor );
+
+      valor = !gpioRead( TEC2 );
+      gpioWrite( LED1, valor );
+
+      valor = !gpioRead( TEC3 );
+      gpioWrite( LED2, valor );
+
+      valor = !gpioRead( TEC4 );
+      gpioWrite( LED3, valor );
+
+      valor = !gpioRead( GPIO0 );
+      gpioWrite( GPIO1, valor );
+   }
+
+```
+
+```
+bool_t gpioRead( gpioMap_t pin ){
+
+   bool_t ret_val     = OFF;
+
+   int8_t pinNamePort = 0;
+   int8_t pinNamePin  = 0;
+
+   int8_t func        = 0;
+
+   int8_t gpioPort    = 0;
+   int8_t gpioPin     = 0;
+
+   gpioObtainPinConfig( pin, &pinNamePort, &pinNamePin, &func,
+                           &gpioPort, &gpioPin );
+
+   ret_val = (bool_t) Chip_GPIO_ReadPortBit( LPC_GPIO_PORT, gpioPort, gpioPin );
+
+   return ret_val;
+}
+
+```
+TEC1 = PORT 0 PIN 4
+TEC2 = 0 8
+TEC3 = 0 9
+TEC4 = 1 9
+ = 3 0
+```
+STATIC INLINE bool Chip_GPIO_ReadPortBit(LPC_GPIO_T *pGPIO, uint32_t port, uint8_t pin)
+{
+   return (bool) pGPIO->B[port][pin];
+}
+
+```
+#### "tickHook_01"
+
+```
+   while(1) {
+      tickCallbackSet( myTickHook, (void*)LEDG );
+      delay(1000);
+      tickCallbackSet( myTickHook, (void*)LEDB );
+      delay(1000);
+      tickCallbackSet( myTickHook, (void*)LED1 );
+      delay(1000);
+      tickCallbackSet( myTickHook, (void*)LED2 );
+      delay(1000);
+      tickCallbackSet( myTickHook, (void*)LED3 );
+      delay(1000);
+      tickCallbackSet( myTickHook, (void*)LEDR );
+      delay(1000);
+   }
+
+```
 
 ## Integrantes
 
 * **Emmanuel Chang**
 * **Miguel Perez Andrade**
-* **Jesús Calle** -  
+* **Jesús Calle**  
