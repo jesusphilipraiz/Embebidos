@@ -325,7 +325,53 @@ Se observa en el loop una asociación con los diferentes leds a la funcion de in
    }
 
 ```
+### Modificación de TickHook
 
+Dado que se tiene interes en poder modificar el tiempo de desborde del timer a preferencia, se opta por definir ese valor por medio de directivas. De esta forma, se define dicho tiempo redefiniendo la variable "TICKRATE_MS".
+
+```c
+#define TICKRATE_1MS (1)            /* 1000 ticks per second */
+#define TICKRATE_10MS   (10)        /* 100 ticks per second */
+#define TICKRATE_100MS  (100)       /* 10 ticks per second */
+#define TICKRATE_MS     (TICKRATE_1MS) /* ¿? ticks per second */
+```
+
+Notar que en este caso no se repite la secuencia de anteriores códigos, es decir, lectura del pin, toma del valor y cambio del estado, para finalmente cargar dicho valor al mismo pin, todo esto realizado con la funciones "gpioWrite()" y "gpioRead()". En este caso se hace uso de la función "gpioToggle()", al que se le pasa la etiqueta del pin a modificar. En este caso particular se redefinio el valor de LED_TOGGLE_MS, esto para definir entre que intervalos se realizaría el encendido de los leds. Observar que la variable "LED_TOGGLE_MS" está compensado para que el tiempo de encendido y parpadeo se mantenga invariante al tiempo de desborde seleccionado.
+
+```c
+#define LED_TOGGLE_100MS  (100)
+#define LED_TOGGLE_500MS  (500)
+#define LED_TOGGLE_1000MS (1000)
+#define LED_TOGGLE_MS   (LED_TOGGLE_500MS / TICKRATE_MS)
+```
+Por ultimo, notar la incorporación del array "arr_LEDS" para que el codigo encienda toda la secuencia de leds. De esta forma se logra no tocar en gran medida el código dentro del loop. 
+```c
+   gpioMap_t arr_LEDS[6] = {LED3, LED3, LED2, LED2, LED1, LED1};  //Son dos etiquetas por cada led para el encendido y posterior apagado
+   int arr_Length = 6;     //Está hardcodeado porque no creo que este la libreria string.h para hacer "length()""
+   int i = 0;
+
+   /* ------------- REPETIR POR SIEMPRE ------------- */
+   while(1) {
+
+      if (LED_Time_Flag == true) {                 //Entra a este if cada Tick_Rate dado por la interupción
+         LED_Time_Flag = false;
+
+         if (LED_Toggle_Counter == 0) {            //Entra a este if cada Led_toggle_ms
+            LED_Toggle_Counter = LED_TOGGLE_MS;
+
+            i = i % arr_Length;
+            gpioToggle(arr_LEDS[i]);
+            i++;
+         }
+         else
+            LED_Toggle_Counter--;
+      }
+   }
+
+   /* NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa no es llamado
+       por ningun S.O. */
+   return 0 ;
+```
 ## Integrantes
 
 * **Emmanuel Chang**
