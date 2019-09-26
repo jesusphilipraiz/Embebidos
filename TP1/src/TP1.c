@@ -22,12 +22,33 @@ volatile bool LED_Time_Flag = false;
 volatile bool BUTTON_Status_Flag = false;
 volatile bool BUTTON_Time_Flag = false;
 
+#define TICKRATE_1MS (1)            /* 1000 ticks per second */
+#define TICKRATE_10MS   (10)        /* 100 ticks per second */
+#define TICKRATE_100MS  (100)       /* 10 ticks per second */
+#define TICKRATE_MS     (TICKRATE_1MS) /* ¿? ticks per second */
+
+#define LED_TOGGLE_100MS  (100)
+#define LED_TOGGLE_500MS  (500)
+#define LED_TOGGLE_1000MS (1000)
+#define LED_TOGGLE_MS   (LED_TOGGLE_500MS / TICKRATE_MS)
+
+#define BUTTON_STATUS_10MS (10)
+#define BUTTON_STATUS_100MS   (50)
+#define BUTTON_STATUS_500MS   (100)
+#define BUTTON_STATUS_MS   (BUTTON_STATUS_10MS / TICKRATE_MS)
+
+volatile bool LED_Time_Flag = false;
+
+volatile bool BUTTON_Status_Flag = false;
+volatile bool BUTTON_Time_Flag = false;
+
 #define TP1_1 (1)       // Parpadeo de un LED
 #define TP1_2 (2)       // Encendido de luces en base a botones switch
 #define TP1_3 (3)       // Secuencia de encendido de luces
 #define TP1_4 (4)       //Damn it
 #define TP1_5 (5)       //Damn it 2
 #define TP1_6 (6)       //Really?!
+
 
 #define TEST (TP1_5)    // Defino que código ejecutar
 
@@ -224,6 +245,7 @@ int main(void) {
 #endif
 
 #if (TEST == TP1_5)     // Print Debug
+
 /* FUNCION que se ejecuta cada vez que ocurre un Tick. */
 void myTickHook( void *ptr ) {
 LED_Time_Flag = true;
@@ -285,6 +307,7 @@ while(1) {
     por ningun S.O. */
 return 0 ;
 }
+
 #endif
 
 #if (TEST == TP1_6)     // Secuencia de encendido de luces
