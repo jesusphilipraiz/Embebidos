@@ -55,7 +55,7 @@ En el archivo project.mk se configura la ubicación del proyecto, el procesador 
 
 Para este caso se modifica el archivo "project.mk" de la siguiente manera:
 
-```
+```c#
 PROJECT = sapi_examples/edu-ciaa-nxp/bare_metal/gpio/gpio_02_blinky
 TARGET = lpc4337_m4
 BOARD = edu_ciaa_nxp
@@ -78,7 +78,7 @@ también los correspondientes headers, carpeta `./inc.`
 ![Makefile](https://github.com/jesusphilipraiz/Embebidos/blob/master/TP1/Imagenes/Makefile.png)
 
 
-|src 	 |inc 	  |Makefile|
+|src   |inc      |Makefile|
 |------  |------  |------  |
 |blinky.c|blinky.h|-----   |
 
@@ -102,7 +102,7 @@ y *step over*.
 
 En principio se omitirán las líneas correspondiente al inicio del código, "main()", y inicialización de la placa, "boardConfig()", para enfocarse pricipalmente en el loop. Tras realizar un ciclo es posible observar que la función "gpioWrite()" es el encargado de encender o apagar el "LEDB" según qué variable se pase {ON, OFF}.
 
-```
+```c
 while(1) {
 
       /* Prende el led azul */
@@ -119,7 +119,7 @@ while(1) {
 
 Realizando *step into* con la función "gpioWrite()" se puede comprobar lo mencionado. Se observa que la función llama a otra función, "gpioObtainPinConfig()", que se encarga de relacionar la etiqueca "LEDB" con una dirección del puerto y pin. Finalmente se llama a la función "Chip_GPIO_SetPinState()" que es la encargada de setear un 1 (ON) o un 0 (OFF) en la dirección de puerto y pin elegido para encender o apagar respectivamente el LED.
 
-```
+```c
 bool_t gpioWrite( gpioMap_t pin, bool_t value ){
 
    bool_t ret_val     = 1;
@@ -141,7 +141,7 @@ bool_t gpioWrite( gpioMap_t pin, bool_t value ){
 
 Para verificar nuevamente lo mencionado, se realiza *step into* en la función "gpioObtainPinConfig()". Se observa que en la misma se hace uso de la configuración de los pines indexado al valor de nuestro pin. Valores de nombre de puerto y pin como también dirección de puerto y pin son copiadas a las variables pasadas por argumento.
  
-```
+```c
 static void gpioObtainPinConfig( gpioMap_t pin, int8_t *pinNamePort, int8_t *pinNamePin,
                                  int8_t *func, int8_t *gpioPort, int8_t *gpioPin ){
 
@@ -154,16 +154,16 @@ static void gpioObtainPinConfig( gpioMap_t pin, int8_t *pinNamePort, int8_t *pin
 ```
 Se realiza *step return* y se ingresa en "Chip_GPIO_SetPinState()". Se observa que las variables port y pin, seteadas en la función anterior, son utilizadas para posicionarse en el registro a atualizar. La variable de actualización es "setting = ON = 1".
 
-```
+```c
 STATIC INLINE void Chip_GPIO_SetPinState(LPC_GPIO_T *pGPIO, uint8_t port, uint8_t pin, bool setting)
 {
-	pGPIO->B[port][pin] = setting;
+   pGPIO->B[port][pin] = setting;
 }
 ```
 Se comprende que el apagado del LEDB funciona exactamente igual, donde la variable "setting" es igual a 0 = "OFF".
 Con respecto a la función "delay()", la misma consiste en tomar un valor de tiempo mediante la función "tickRead()" al entrar a la función, para luego comparar dentro de un loop, la diferencia de dicho valor con una variable de tiempo actualizada y la duración deseada normalizada.
 
-```
+```c
 void delay(tick_t duration){
     tick_t startTime = tickRead();
     while ( (tick_t)(tickRead() - startTime) < duration/tickRateMS );
@@ -178,7 +178,7 @@ Dado que se comprobó que el código "parpadeo de led" funciona correctamente, s
 
 Recordar que dado que se cambio la ubicación del proyecto se debe actualizar las definiciones de "project.mk"
 
-```
+```c#
 PROJECT = ../TP1              # Actualización de la ubicación del proyecto
 TARGET = lpc4337_m4
 BOARD = edu_ciaa_nxp
@@ -202,7 +202,7 @@ Dado que el trabajo practico se realizará en grupo, se crea un repositorio en G
 
 Dado que se tiene interés en ejecutar cualquier código sin tener que modificar el "project.mk" y/o copiar los nuevos códigos en la carpeta "TP1" para cada actualización, se procede a usar compilación condicional.
 
-```
+```c
 #define TP1_1 (1)       // Parpadeo de un LED
 #define TP1_2 (2)       // Encendido de luces en base a botones switch
 #define TP1_3 (3)       // Secuencia de encendido de luces
@@ -233,10 +233,12 @@ PROBLEMA: Los tres códigos funcionan perfectamente individualmente y con la com
 
 #### "switches_leds.c"
 
-```
+Como se mencionó previamente, nos concetraremos en el loop del código. El loop hace uso de la función de escritura usado en el anterior caso, por lo que el análisis será omitido. Observando el funcionamiento del código, se sabe que en caso de no tocar ningún boton, ningún led se encederá. En caso de presionar alguno, el led proximo a ese boton se encendera. Con esto concluimos que la función "gpioRead()" devuelve 1 si el boton no está presionado y 0 en caso contrario. Para verificar lo mencionado, se procede a realzar *step into* en dicha función.
+
+```c
    while(1) {
 
-      valor = !gpioRead( TEC1 );
+      valor = !gpioRead( TEC1 );       //Devuelve 1 si no se toca el boton -> !1 -> 0 -> valor = OFF
       gpioWrite( LEDB, valor );
 
       valor = !gpioRead( TEC2 );
@@ -258,30 +260,24 @@ PROBLEMA: Los tres códigos funcionan perfectamente individualmente y con la com
 bool_t gpioRead( gpioMap_t pin ){
 
    bool_t ret_val     = OFF;
-
    int8_t pinNamePort = 0;
    int8_t pinNamePin  = 0;
-
    int8_t func        = 0;
-
    int8_t gpioPort    = 0;
    int8_t gpioPin     = 0;
 
    gpioObtainPinConfig( pin, &pinNamePort, &pinNamePin, &func,
-                           &gpioPort, &gpioPin );
+                           &gpioPort, &gpioPin );     //Relaciona variable pin con un port = gpioPort y pin = gpioPin
 
-   ret_val = (bool_t) Chip_GPIO_ReadPortBit( LPC_GPIO_PORT, gpioPort, gpioPin );
+   ret_val = (bool_t) Chip_GPIO_ReadPortBit( LPC_GPIO_PORT, gpioPort, gpioPin );    //Lee el contenido del registro
 
    return ret_val;
 }
 
 ```
-TEC1 = PORT 0 PIN 4
-TEC2 = 0 8
-TEC3 = 0 9
-TEC4 = 1 9
- = 3 0
-```
+Realizando nuevamente *step into* en la función "Chip_GPIO_ReadPortBit()", se observa como la función accede al registro correspondiente y devuelve su valor por retorno.
+
+```c
 STATIC INLINE bool Chip_GPIO_ReadPortBit(LPC_GPIO_T *pGPIO, uint32_t port, uint8_t pin)
 {
    return (bool) pGPIO->B[port][pin];
@@ -290,11 +286,32 @@ STATIC INLINE bool Chip_GPIO_ReadPortBit(LPC_GPIO_T *pGPIO, uint32_t port, uint8
 ```
 #### "tickHook_01"
 
+En este caso se hace uso de interrupciones y por ende tambien de funciones "enlazadas". En este caso se setea una interupcion por timer de desborde. Cuando se activa el flag, se llama a la función "myTickHook()" a la que se le pasa como variable la etiqueta de un led especifico.
+
+```c
+void myTickHook( void *ptr ){
+
+   static bool_t ledState = OFF;    //Variable tipo static. Recuerda el contenido del mismo aun si se sale de la función
+
+   gpioMap_t led = (gpioMap_t)ptr;
+
+   if( ledState ){         //Si estaba en ON entonces OFF
+      ledState = OFF;
+   }
+   else{
+      ledState = ON;       //Si estaba en OFF entonces ON
+   }
+   gpioWrite( led, ledState );      //Como se llama a la función cada 50 ms el led parpadea constantamente
+}
+
 ```
+Se observa en el loop una asociación con los diferentes leds a la funcion de interrupción cada 1000 ms. Notar que la función "tickCallbackSet()" no genera que el led parpadee, solo realiza la asociación, los multiples debordes del timer lo generan.
+
+```c
    while(1) {
-      tickCallbackSet( myTickHook, (void*)LEDG );
+      tickCallbackSet( myTickHook, (void*)LEDG );     //Se relaciona al LEDG con la funión de interrupción
       delay(1000);
-      tickCallbackSet( myTickHook, (void*)LEDB );
+      tickCallbackSet( myTickHook, (void*)LEDB );     //Se relaciona al LEDB y no al LEDG
       delay(1000);
       tickCallbackSet( myTickHook, (void*)LED1 );
       delay(1000);
