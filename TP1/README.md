@@ -255,8 +255,9 @@ Como se mencionó previamente, nos concetraremos en el loop del código. El loop
    }
 
 ```
+Se observa que la función "gpioRead()" posee gran similitud con la función de escritura previamente analizada. La primera función consiste en relacionar una etiqueta con un registro especifico. La segunda función se encarga de retornar el valor del registro. Notar que en este caso se hace lectura de 5 registros, [TEC1={0,4}, TEC2={0,8}, TEC3={0,9}, TEC4={1,9}, GPIO0={3,0}], siendo el primer termino el valor del puerto y el segundo el pin correspondiente.
 
-```
+```c
 bool_t gpioRead( gpioMap_t pin ){
 
    bool_t ret_val     = OFF;
