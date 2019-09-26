@@ -1,6 +1,6 @@
-# Trabajo Practico 1 de Embebidos
+# Trabajo Práctico 1 de Embebidos
 
-El trabajo practico consiste en la familiarización de la IDE y GPIO
+El trabajo práctico consiste en la familiarización de la IDE y GPIO
 necesarios para el proyecto final.
 
 ##  Pre-requisitos 
@@ -36,7 +36,7 @@ automática se puede realizar por medio de linea de comandos.
 
 Para ello se procedió a ir al siguiente [Link](https://www.nxp.com/support/developer-resources/software-development-tools/mcuxpresso-software-and-tools/mcuxpresso-integrated-development-environment-ide:MCUXpresso-IDE?tab=Design_Tools_Tab).
 
-NOTA: En este caso no se realizó la activación del software.
+*NOTA: En este caso no se realizó la activación del software.*
 
 ### Clonación de repositorio
 
@@ -72,13 +72,13 @@ El contenido del proyecto, parpadeo de un led, se presenta a continuación:
 
 En la misma es posible observar 2 carpetas y un archivo Makefile.
 Como se mencionó previamente, este ultimo archivo indica
-la carpeta donde se ubican los códigos fuentes, ./src, como 
-también los correspondientes headers, carpeta./inc.
+la carpeta donde se ubican los códigos fuentes, `./src`, como 
+también los correspondientes headers, carpeta `./inc.`
 
 ![Makefile](https://github.com/jesusphilipraiz/Embebidos/blob/master/TP1/Imagenes/Makefile.png)
 
 
-|src 	 |inc 	  |Makefile|
+|src   |inc      |Makefile|
 |------  |------  |------  |
 |blinky.c|blinky.h|-----   |
 
@@ -87,20 +87,20 @@ también los correspondientes headers, carpeta./inc.
 
 #### Primera ejecución con MCUXpresso
 
-Tras seleccionar el proyecto a partir del Makefile de la carpeta "blinky_02", se procede a construir el proyecto. Se obsera que el proyecto no presenta fallas dado que el mensaje de consola indica 0 errores. 
+Tras seleccionar el proyecto a partir del Makefile de la carpeta "blinky_02", se procede a construir el proyecto. Se observa que el proyecto no presenta fallas dado que el mensaje de consola indica 0 errores. 
 
 ![Build](https://github.com/jesusphilipraiz/Embebidos/blob/master/TP1/Imagenes/CaptureBuild.png)
 
-Notar que aunque la consola indica que hay dos warning estos se deben solo a la presencia de variables no utilizadas.
+Notar que aunque la consola indica que hay dos warning estos se deben sólo a la presencia de variables no utilizadas.
 
-Por ultimo, tras conectar la placa a la PC a travez de entrada "debug", se seleciona la opción debug que previamente personalizamos ([Sección 1.5](https://campus.fi.uba.ar/pluginfile.php/175917/mod_resource/content/15/Sistemas_Embebidos-2018_1erC-TP1-Cruz.pdf)).
+Por último, tras conectar la placa a la PC a través de entrada "debug", se seleciona la opción debug que previamente personalizamos ([Sección 1.5](https://campus.fi.uba.ar/pluginfile.php/175917/mod_resource/content/15/Sistemas_Embebidos-2018_1erC-TP1-Cruz.pdf)).
  
 Tras ejecutar el proyecto previamente mencionado, "blinky_02", se
 procede a analizar linea tras linea. Esto se logra agregando 
 *breakpoint* como también haciendo uso de los comandos *Step into*
 y *step over*.
 
-En principio se omitirán las lineas correspondiente al inicio del codigo, "main()", y inicialización de la placa, "boardConfig()", para enfocarse pricipalmente en el loop. Tras realizar un ciclo es posible observar que la función "gpioWrite()" es el encargado de encender o apagar el "LEDB" segun que variable se pase {ON, OFF}.
+En principio se omitirán las líneas correspondiente al inicio del código, "main()", y inicialización de la placa, "boardConfig()", para enfocarse pricipalmente en el loop. Tras realizar un ciclo es posible observar que la función "gpioWrite()" es el encargado de encender o apagar el "LEDB" según qué variable se pase {ON, OFF}.
 
 ```c
 while(1) {
@@ -117,7 +117,7 @@ while(1) {
    }
 ```
 
-Realizando *step into* con la función "gpioWrite()" se puede comprobar lo mencionado. Se observa que la función llama a otra función, "gpioObtainPinConfig()", que se encarga de relacionar la etiqueca "LEDB" con una dirección del puerto y pin. Finalmente se llama a la función "Chip_GPIO_SetPinState()" que es la encargada de setear un 1 (ON) o un 0 (OFF) en la direccion de puerto y pin elegido para encender o apagar respectivamente el LED.
+Realizando *step into* con la función "gpioWrite()" se puede comprobar lo mencionado. Se observa que la función llama a otra función, "gpioObtainPinConfig()", que se encarga de relacionar la etiqueca "LEDB" con una dirección del puerto y pin. Finalmente se llama a la función "Chip_GPIO_SetPinState()" que es la encargada de setear un 1 (ON) o un 0 (OFF) en la dirección de puerto y pin elegido para encender o apagar respectivamente el LED.
 
 ```c
 bool_t gpioWrite( gpioMap_t pin, bool_t value ){
@@ -157,7 +157,7 @@ Se realiza *step return* y se ingresa en "Chip_GPIO_SetPinState()". Se observa q
 ```c
 STATIC INLINE void Chip_GPIO_SetPinState(LPC_GPIO_T *pGPIO, uint8_t port, uint8_t pin, bool setting)
 {
-	pGPIO->B[port][pin] = setting;
+   pGPIO->B[port][pin] = setting;
 }
 ```
 Se comprende que el apagado del LEDB funciona exactamente igual, donde la variable "setting" es igual a 0 = "OFF".
@@ -172,7 +172,7 @@ void delay(tick_t duration){
 
 ### Migración de arhivos
 
-Dado que se comprobó que el código "parpadeo de led" funciona correctamente, se procede a crear una carpeta en paralelo a la carpeta firmware_v2. En la misma se almacenarán los codigos correspondientes al primer trabajo practico
+Dado que se comprobó que el código "parpadeo de led" funciona correctamente, se procede a crear una carpeta en paralelo a la carpeta firmware_v2. En la misma se almacenarán los códigos correspondientes al primer trabajo práctico.
 
 %Imagen de la ubicación de la nueva carpeta
 
@@ -184,7 +184,7 @@ TARGET = lpc4337_m4
 BOARD = edu_ciaa_nxp
 ```
 
-Para comprobar que todo el proceso se realizó correctamente, se copia el contenido de la carpeta "blinky_02" a la carpeta "TP1" y se renombran todos los archivos, con exepción del Makefile, como "TP1.* " (Siendo .c o .h donde corresponda). Dado que la ejecución del codigo se realiza correctamente, se verifica una migración exitosa.
+Para comprobar que todo el proceso se realizó correctamente, se copia el contenido de la carpeta "blinky_02" a la carpeta "TP1" y se renombran todos los archivos, con exepción del Makefile, como "TP1.\*" (Siendo .c o .h donde corresponda). Dado que la ejecución del código se realiza correctamente, se verifica una migración exitosa.
 
 ### Primer uso con Github
 
@@ -200,7 +200,7 @@ Dado que el trabajo practico se realizará en grupo, se crea un repositorio en G
 
 ### Compilación condicional
 
-Dado que se tiene interes en ejecutar cualquier codigo sin tener que modificar el "project.mk" y/o copiar los nuevos codigos en la carpeta "TP1" para cada actualización, se procede a usar compilación condicional.
+Dado que se tiene interés en ejecutar cualquier código sin tener que modificar el "project.mk" y/o copiar los nuevos códigos en la carpeta "TP1" para cada actualización, se procede a usar compilación condicional.
 
 ```c
 #define TP1_1 (1)       // Parpadeo de un LED
@@ -213,23 +213,23 @@ Dado que se tiene interes en ejecutar cualquier codigo sin tener que modificar e
    \\Codigo 1
 #endif
 
-#if (TEST == TP1_1)     // Encendido de luces en base a botones switch
+#if (TEST == TP1_2)     // Encendido de luces en base a botones switch
 ...
 ...
 
 ``` 
 
-Gracias a la compilación condicional es posible ejecutar cualquiera de los tres proyectos solo modificando la variable "TEST" aunque con la desventaja de tener todos los códigos en un solo archivo.
+Gracias a la compilación condicional es posible ejecutar cualquiera de los tres proyectos solo modificando la varaible "TEST" aunque con la desventaja de tener todos los códigos en un solo archivo.
 
-Para comprobar que el proceso se realizó exitosamente, se cargan tres codigos al archivo "TP1.c" y se ejecuta cada uno modificando la variable TEST:
+Para comprobar que el proceso se realizó exitosamente, se cargan tres códigos al archivo "TP1.c" y se ejecuta cada uno modificando la variable TEST:
 
 * "blinky_02.c" 
 * "switches_leds.c"
 * "tickHook_01"
 
-Se observa que los tres codigos funcionan correctamente y por ende que la compilación condicional se aplicó correctamente.
+Se observa que los tres códigos funcionan correctamente y por ende que la compilación condicional se aplicó correctamente.
 
-PROBLEMA: Los tres códigos funcionan perfectamente individualmente y con la compilación condicional, pero tras terminar de usar la placa y desconectar, no es posible usar el mismo puerto USB para la siguiente oportunidad. Agrego que antes de desconectar la placa paro todas las seciones de debug que se esten realizando. Ademas terminó y limpió en la pestaña "debig" todads aquellas seciones restantes. Realizó clean del proyecto y por ultimo close del proyecto, pero el problema persiste. 
+PROBLEMA: Los tres códigos funcionan perfectamente individualmente y con la compilación condicional, pero tras terminar de usar la placa y desconectar, no es posible usar el mismo puerto USB para la siguiente oportunidad. Agrego que antes de desconectar la placa paró todas las secciones de debug que se estén realizando. Además terminó y limpió en la pestaña "debug" todas aquellas secciones restantes. Realizo clean del proyecto y por ultimo close del proyecto, pero el problema persiste. 
 
 #### "switches_leds.c"
 
@@ -325,7 +325,53 @@ Se observa en el loop una asociación con los diferentes leds a la funcion de in
    }
 
 ```
+### Modificación de TickHook
 
+Dado que se tiene interes en poder modificar el tiempo de desborde del timer a preferencia, se opta por definir ese valor por medio de directivas. De esta forma, se define dicho tiempo redefiniendo la variable "TICKRATE_MS".
+
+```c
+#define TICKRATE_1MS (1)            /* 1000 ticks per second */
+#define TICKRATE_10MS   (10)        /* 100 ticks per second */
+#define TICKRATE_100MS  (100)       /* 10 ticks per second */
+#define TICKRATE_MS     (TICKRATE_1MS) /* ¿? ticks per second */
+```
+
+Notar que en este caso no se repite la secuencia de anteriores códigos, es decir, lectura del pin, toma del valor y cambio del estado, para finalmente cargar dicho valor al mismo pin, todo esto realizado con la funciones "gpioWrite()" y "gpioRead()". En este caso se hace uso de la función "gpioToggle()", al que se le pasa la etiqueta del pin a modificar. En este caso particular se redefinio el valor de LED_TOGGLE_MS, esto para definir entre que intervalos se realizaría el encendido de los leds. Observar que la variable "LED_TOGGLE_MS" está compensado para que el tiempo de encendido y parpadeo se mantenga invariante al tiempo de desborde seleccionado.
+
+```c
+#define LED_TOGGLE_100MS  (100)
+#define LED_TOGGLE_500MS  (500)
+#define LED_TOGGLE_1000MS (1000)
+#define LED_TOGGLE_MS   (LED_TOGGLE_500MS / TICKRATE_MS)
+```
+Por ultimo, notar la incorporación del array "arr_LEDS" para que el codigo encienda toda la secuencia de leds. De esta forma se logra no tocar en gran medida el código dentro del loop. 
+```c
+   gpioMap_t arr_LEDS[6] = {LED3, LED3, LED2, LED2, LED1, LED1};  //Son dos etiquetas por cada led para el encendido y posterior apagado
+   int arr_Length = 6;     //Está hardcodeado porque no creo que este la libreria string.h para hacer "length()""
+   int i = 0;
+
+   /* ------------- REPETIR POR SIEMPRE ------------- */
+   while(1) {
+
+      if (LED_Time_Flag == true) {                 //Entra a este if cada Tick_Rate dado por la interupción
+         LED_Time_Flag = false;
+
+         if (LED_Toggle_Counter == 0) {            //Entra a este if cada Led_toggle_ms
+            LED_Toggle_Counter = LED_TOGGLE_MS;
+
+            i = i % arr_Length;
+            gpioToggle(arr_LEDS[i]);
+            i++;
+         }
+         else
+            LED_Toggle_Counter--;
+      }
+   }
+
+   /* NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa no es llamado
+       por ningun S.O. */
+   return 0 ;
+```
 ## Integrantes
 
 * **Emmanuel Chang**
