@@ -1,5 +1,6 @@
 //#include "blinky.h"   // <= own header (optional)
 #include "sapi.h"       // <= sAPI header
+DEBUG_PRINT_ENABLE;
 
 #define TICKRATE_1MS (1)            /* 1000 ticks per second */
 #define TICKRATE_10MS   (10)        /* 100 ticks per second */
@@ -28,7 +29,7 @@ volatile bool BUTTON_Time_Flag = false;
 #define TP1_5 (5)       //Damn it 2
 #define TP1_6 (6)       //Really?!
 
-#define TEST (TP1_4)    // Defino que código ejecutar
+#define TEST (TP1_5)    // Defino que código ejecutar
 
 #if (TEST == TP1_1)     // Parpadeo de un LED
 
@@ -164,7 +165,7 @@ int main(void){
 
 #endif
 
-#if (TEST == TP1_4)     // Secuencia de encendido de luces
+#if (TEST == TP1_4)     // Secuencia de encendido de luces por variable TICKRATE_MS
    /* FUNCION que se ejecuta cada vez que ocurre un Tick. */
 void myTickHook( void *ptr ) {
    LED_Time_Flag = true;
@@ -223,7 +224,67 @@ int main(void) {
 #endif
 
 #if (TEST == TP1_5)     // Print Debug
+/* FUNCION que se ejecuta cada vez que ocurre un Tick. */
+void myTickHook( void *ptr ) {
+LED_Time_Flag = true;
+}
 
+
+/* FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE RESET. */
+int main(void) {
+
+/* ------------- INICIALIZACIONES ------------- */
+uint32_t LED_Toggle_Counter = 0;
+
+/* Inicializar la placa */
+boardConfig();
+
+/* UART for debug messages. */
+	debugPrintConfigUart( UART_USB, 115200 );
+	debugPrintString( "DEBUG c/sAPI\r\n" );
+
+
+/* Inicializar el conteo de Ticks con resolucion de 1ms (se ejecuta
+    periodicamente una interrupcion cada TICKRATE_MS que incrementa un contador de
+    Ticks obteniendose una base de tiempos). */
+tickConfig( TICKRATE_MS );
+
+/* Se agrega ademas un "tick hook" nombrado myTickHook. El tick hook es
+    simplemente una funcion que se ejecutara peri�odicamente con cada
+    interrupcion de Tick, este nombre se refiere a una funcion "enganchada"
+    a una interrupcion.
+    El segundo parametro es el parametro que recibe la funcion myTickHook
+    al ejecutarse. En este ejemplo se utiliza para pasarle el led a titilar.
+*/
+tickCallbackSet( myTickHook, (void*)NULL );
+gpioMap_t arr_LEDS[6] = {LED3, LED3, LED2, LED2, LED1, LED1};
+int arr_Length = 6;
+int i = 0;
+
+/* ------------- REPETIR POR SIEMPRE ------------- */
+while(1) {
+   __WFI();
+
+   if (LED_Time_Flag == true) {
+      LED_Time_Flag = false;
+
+      if (LED_Toggle_Counter == 0) {
+         LED_Toggle_Counter = LED_TOGGLE_MS;
+
+         i = i % arr_Length;
+         gpioToggle(arr_LEDS[i]);
+         debugPrintString( "LED Toggle\n" );
+         i++;
+      }
+      else
+         LED_Toggle_Counter--;
+   }
+}
+
+/* NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa no es llamado
+    por ningun S.O. */
+return 0 ;
+}
 #endif
 
 #if (TEST == TP1_6)     // Secuencia de encendido de luces
