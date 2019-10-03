@@ -37,11 +37,6 @@ volatile bool BUTTON_Time_Flag = false;
 #define BUTTON_STATUS_500MS   (100)
 #define BUTTON_STATUS_MS   (BUTTON_STATUS_10MS / TICKRATE_MS)
 
-volatile bool LED_Time_Flag = false;
-
-volatile bool BUTTON_Status_Flag = false;
-volatile bool BUTTON_Time_Flag = false;
-
 #define TP1_1 (1)       // Parpadeo de un LED
 #define TP1_2 (2)       // Encendido de luces en base a botones switch
 #define TP1_3 (3)       // Secuencia de encendido de luces
@@ -50,7 +45,7 @@ volatile bool BUTTON_Time_Flag = false;
 #define TP1_6 (6)       //Really?!
 
 
-#define TEST (TP1_5)    // Defino que código ejecutar
+#define TEST (TP1_3)    // Defino que código ejecutar
 
 #if (TEST == TP1_1)     // Parpadeo de un LED
 
@@ -162,6 +157,7 @@ int main(void){
    */
    tickCallbackSet( myTickHook, (void*)LEDR );
    delay(1000);
+   while(1);
 
    /* ------------- REPETIR POR SIEMPRE ------------- */
    while(1) {
@@ -311,5 +307,79 @@ return 0 ;
 #endif
 
 #if (TEST == TP1_6)     // Secuencia de encendido de luces
+
+/* FUNCION que se ejecuta cada vez que ocurre un Tick. */
+void myTickHook( void *ptr ) {
+LED_Time_Flag = true;
+}
+
+
+/* FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE RESET. */
+int main(void) {
+
+/* ------------- INICIALIZACIONES ------------- */
+uint32_t LED_Toggle_Counter = 0;
+
+/* Inicializar la placa */
+boardConfig();
+
+/* UART for debug messages. */
+	debugPrintConfigUart( UART_USB, 115200 );
+	debugPrintString( "DEBUG c/sAPI\r\n" );
+
+
+/* Inicializar el conteo de Ticks con resolucion de 1ms (se ejecuta
+    periodicamente una interrupcion cada TICKRATE_MS que incrementa un contador de
+    Ticks obteniendose una base de tiempos). */
+tickConfig( TICKRATE_MS );
+
+/* Se agrega ademas un "tick hook" nombrado myTickHook. El tick hook es
+    simplemente una funcion que se ejecutara peri�odicamente con cada
+    interrupcion de Tick, este nombre se refiere a una funcion "enganchada"
+    a una interrupcion.
+    El segundo parametro es el parametro que recibe la funcion myTickHook
+    al ejecutarse. En este ejemplo se utiliza para pasarle el led a titilar.
+*/
+tickCallbackSet( myTickHook, (void*)NULL );
+gpioMap_t arr_LEDS[3] = {LED1, LED2, LED3};
+int arr_Length = 3;
+int i = 0;
+int valor_actual = 1;
+int valor_viejo = 1;
+int valor_led_actual = 0;
+int valor_led_viejo = 0;
+
+gpioWrite( arr_LEDS[0], 1 );
+
+/* ------------- REPETIR POR SIEMPRE ------------- */
+while(1) {
+
+	valor_actual = gpioRead( TEC3 );
+	if (!valor_actual & valor_viejo){
+		for(i=0;i<arr_Length;i++){
+			valor_led_actual = gpioRead( arr_LEDS[i] );
+			if (valor_led_actual){
+				gpioWrite( arr_LEDS[i], 0 );
+			} else if (valor_led_viejo){
+				gpioWrite( arr_LEDS[i], 1 );
+			}
+			valor_led_viejo = valor_led_actual;
+		}
+		if (valor_led_viejo){
+			gpioWrite( arr_LEDS[0], 1 );
+		}
+
+	}
+	valor_viejo = valor_actual;
+}
+
+
+/*      valor = !gpioRead( TEC3 );
+      gpioWrite( LED2, valor );*/
+/* NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa no es llamado
+    por ningun S.O. */
+return 0 ;
+}
+
 
 #endif
