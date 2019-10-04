@@ -45,7 +45,7 @@ volatile bool BUTTON_Time_Flag = false;
 #define TP1_6 (6)       //Really?!
 
 
-#define TEST (TP1_3)    // Defino que código ejecutar
+#define TEST (TP1_6)    // Defino que código ejecutar
 
 #if (TEST == TP1_1)     // Parpadeo de un LED
 
